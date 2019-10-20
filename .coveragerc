@@ -1,0 +1,4 @@
+[run]
+omit=
+    manven/cli.py
+    manven/__main__.py
