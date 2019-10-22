@@ -137,7 +137,7 @@ def check_first_usage():
               "\n"
               "If you're using fish, add instead:\n"
               "\n"
-              "alias smanven 'source $(which manven.fish)'\n"
+              "alias smanven 'source (which manven.fish)'\n"
               "\n"
               "Press enter to continue...")
 

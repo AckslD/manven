@@ -7,7 +7,7 @@ with open("requirements.txt", 'r') as f:
     install_requires = [line.strip() for line in f.readlines()]
 
 setuptools.setup(
-    name="venv-manager",
+    name="manven",
     version="0.0.0",
     author="Axel Dahlberg",
     author_email="axel.dahlberg12@gmail.com",

@@ -1,7 +1,7 @@
-Venv Manager (0.0.0)
+manven (0.0.0)
 =====================================================
 
-Welcome to Venv Manager's README.
+Welcome to manven's README.
 
 To install the package do:
 ```bash
