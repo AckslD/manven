@@ -1,4 +1,4 @@
-#!/usr/bin/fish
+#!/usr/bin/env fish
 
 # Get path to files
 set MANVEN_PATH (python3 -m manven)

@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 # Get path to files
 MANVEN_PATH=$(python3 -m manven)
