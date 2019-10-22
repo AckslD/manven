@@ -13,7 +13,7 @@ def has_binary(binary_name):
     Returns:
         bool: Whether the binary is in the PATH.
     """
-    output = run(["which", binary_name])
+    output = run(["which", binary_name], capture_output=True)
     return output.returncode == 0
 
 

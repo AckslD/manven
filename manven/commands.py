@@ -73,7 +73,7 @@ def list_environments(include_temporary=False):
 
     # Optionally include the temporary environments
     if include_temporary:
-        environments += sorted(_list_temporary_environments())
+        environments += [f".temp/{venv}" for venv in sorted(_list_temporary_environments())]
 
     return environments
 
@@ -91,8 +91,9 @@ def activate_temp_environment(no_manven=False):
 def prune_temp_environments():
     """Prunes all temporary environments."""
     path_to_temp = _get_temp_path()
-    for entry in os.listdir(path_to_temp):
-        _remove_file_or_folder(os.path.join(path_to_temp, entry))
+    temp_environments = sorted(_list_temporary_environments())
+    for temp_environment in temp_environments:
+        _remove_file_or_folder(os.path.join(path_to_temp, temp_environment))
 
 
 def remove_environment(environment_name):
@@ -202,7 +203,7 @@ def _list_temporary_environments():
     """
     temp_path = _get_temp_path()
     if os.path.exists(temp_path):
-        return [f".temp/{venv}" for venv in os.listdir(temp_path) if _is_environment(venv, basefolder=temp_path)]
+        return [venv for venv in os.listdir(temp_path) if _is_environment(venv, basefolder=temp_path)]
     else:
         return []
 
