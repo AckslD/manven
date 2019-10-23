@@ -10,8 +10,8 @@ Happy venv-ing!
 
 ## Installation
 
-See [installation]().
+See [installation](https://acksld.github.io/manven/build/html/installation.html).
 
 ## Getting started
 
-See [getting started]().
+See [getting started](https://acksld.github.io/manven/build/html/usage.html).
