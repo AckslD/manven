@@ -5,7 +5,7 @@
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 SOURCEDIR     = .
-BUILDDIR      = _build
+BUILDDIR      = build
 
 # Put it first so that "make" without argument is like "make help".
 help:
@@ -23,7 +23,7 @@ python-deps:
 build: python-deps html
 
 open:
-	open _build/html/index.html
+	open build/html/index.html
 
 see: html open
 
