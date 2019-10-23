@@ -1,0 +1,274 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Getting started &mdash; manven 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> manven
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#configure">Configure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#create-an-environment">Create an environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#remove-an-environment">Remove an environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#list-current-environment">List current environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#temporary-environments">Temporary environments</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">manven</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Getting started</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/usage.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="getting-started">
+<h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="configure">
+<h2>Configure<a class="headerlink" href="#configure" title="Permalink to this headline">¶</a></h2>
+<p>You can chose where you want <code class="docutils literal notranslate"><span class="pre">manven</span></code> to put the virtual environments by adding a file of the form</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>[manven]
+ENVS_PATH=path/to/your/dir
+</pre></div>
+</div>
+<p>which can either be:</p>
+<ol class="arabic simple">
+<li><p>In the current directory with the name <code class="docutils literal notranslate"><span class="pre">.manven.conf</span></code>.</p></li>
+<li><p>In the home directory (<code class="docutils literal notranslate"><span class="pre">~</span></code>/<code class="docutils literal notranslate"><span class="pre">$HOME</span></code>), with the name <code class="docutils literal notranslate"><span class="pre">.manven.conf</span></code>.</p></li>
+<li><p>In the directory <code class="docutils literal notranslate"><span class="pre">~/.config/manven/</span></code> with the name <code class="docutils literal notranslate"><span class="pre">manven.conf</span></code>.</p></li>
+</ol>
+<p>If there is more than one file as above the first in the list will be used.</p>
+<p>The rest of this section assumes that you set the alias <code class="docutils literal notranslate"><span class="pre">smanven</span></code> as recommended in the <a class="reference internal" href="installation.html"><span class="doc">Installation</span></a>.</p>
+<p>To find out which path is used by manven, simply do:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>smanven get path
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-an-environment">
+<h2>Create an environment<a class="headerlink" href="#create-an-environment" title="Permalink to this headline">¶</a></h2>
+<p>To create and activate an environment, do:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>smanven activate venv
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">venv</span></code> is the name of your virtual environment.
+You now have a working <code class="docutils literal notranslate"><span class="pre">virtualenv</span></code> environment which you can start using.
+To deactivate the environment, simply type <code class="docutils literal notranslate"><span class="pre">deactivate</span></code>.</p>
+<p>If you just want to create the environment without activating it you can, do:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>smanven create venv
+</pre></div>
+</div>
+<p>By default <code class="docutils literal notranslate"><span class="pre">manven</span></code> will install itself in the new environment such that you can easily switch to another (without deactivating) by calling <code class="docutils literal notranslate"><span class="pre">smanven</span> <span class="pre">activate</span></code> again.
+However, to not have <code class="docutils literal notranslate"><span class="pre">manven</span></code> install itself, give the flag <code class="docutils literal notranslate"><span class="pre">--no-manven</span></code>.
+If you already have the virtual environment <code class="docutils literal notranslate"><span class="pre">venv</span></code> and try to activate/create it again your current environment will be kept.
+If you instead want to replace the environment with a fresh one, give the flag <code class="docutils literal notranslate"><span class="pre">--new``</span></code>.</p>
+</div>
+<div class="section" id="remove-an-environment">
+<h2>Remove an environment<a class="headerlink" href="#remove-an-environment" title="Permalink to this headline">¶</a></h2>
+<p>To remove an existing environment, do:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>smanven remove venv
+</pre></div>
+</div>
+</div>
+<div class="section" id="list-current-environment">
+<h2>List current environment<a class="headerlink" href="#list-current-environment" title="Permalink to this headline">¶</a></h2>
+<p>To list the current virtual environments available, do:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>smanven list
+</pre></div>
+</div>
+<p>To also include the temporary environments (see below) pass the flag <code class="docutils literal notranslate"><span class="pre">--all</span></code> (or <code class="docutils literal notranslate"><span class="pre">-a</span></code>).</p>
+</div>
+<div class="section" id="temporary-environments">
+<h2>Temporary environments<a class="headerlink" href="#temporary-environments" title="Permalink to this headline">¶</a></h2>
+<p>To quickly create and activate a temporary environments, do:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>smanven temp
+</pre></div>
+</div>
+<p>which also accepts the <code class="docutils literal notranslate"><span class="pre">--no-manven</span></code> flag as <code class="docutils literal notranslate"><span class="pre">create</span></code> and <code class="docutils literal notranslate"><span class="pre">activate</span></code> does.
+Temorary virtual environment will be put in a folder <code class="docutils literal notranslate"><span class="pre">.temp</span></code> next to the other environments and will be given names <code class="docutils literal notranslate"><span class="pre">temp_venv_&lt;i&gt;</span></code> where <code class="docutils literal notranslate"><span class="pre">i</span></code> is incremental.</p>
+<p>To prune all the current temporary environments, do:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>smanven prune
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Axel Dahlberg
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
