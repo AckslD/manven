@@ -1,6 +1,10 @@
 Installation
 ============
 
+.. note::
+
+   To use ``manven`` you need to be using ``bash``, ``fish`` or similar as a shell (it should work also for ``zsh`` and ``dash`` but not yet tested).
+
 Install from pypi
 -----------------
 
