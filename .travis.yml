@@ -40,6 +40,7 @@ deploy:
     skip_cleanup: true
     github_token: "$GITHUB_TOKEN"
     keep_history: true
+    committer_from_gh: true
     local_dir: docs/build/html
     on:
       branch: master
