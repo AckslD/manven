@@ -1,33 +1,32 @@
 language: python
 branches:
   only:
-  - master
-  - develop
+    - master
+    - develop
 matrix:
   include:
-  - name: Python 3.7 on Xenial Linux
-    python: 3.7
-    env:
-    - BUILD=True
-    dist: xenial
-  - name: Python 3.7 on macOS
-    os: osx
-    osx_image: xcode10.2
-    language: shell
+    - name: Python 3.7 on Xenial Linux
+      python: 3.7
+      env:
+        - BUILD=True
+      dist: xenial
+    - name: Python 3.7 on macOS
+      os: osx
+      osx_image: xcode10.2
+      language: shell
 before_install:
-- make build
+  - make build
 install:
-- make test-deps
-- pip3 install dist/*.whl
+  - make test-deps
+  - pip3 install dist/*.whl
 script:
-- make lint
-- make tests
+  - make lint
+  - make tests
 before_deploy:
-- cd docs
-- make build
-- cd ..
+  - cd docs
+  - make build
+  - cd ..
 deploy:
-  matrix:
   - provider: pypi
     user: __token__
     password:
@@ -45,3 +44,6 @@ deploy:
     on:
       branch: master
       condition: "$BUILD = True"
+env:
+  global:
+    secure: yN9zWSG9F+EvMUbw8+Z2YP6jC8pFeyzrPMNOOgTBWslnz8LUPz6ZHiqlWfX5axPdhisNYcKfPyGRLbjjPNrN5IVJuiSwxnKNS9PXXl1yxDwz4SM4gBZmpLXJa8KpaV+3WvuS79ab/Ef1Y/8ewCRzoRcwEOtKF9PRsj1O9EQJwywoHEv9sox3rXD+TS80pwxQLiL8VYB4ajLxMZFgVe9yLJT/sqwPRcpwf2rDdis3FtbzREVmRW9SBPPq4gZTKmYgvQkTrOQ0tpQezi21SkYJSmec3oukir+l5cBJdIyTwti85evUrJ/fRmneNH+kRPltCHZg3QfC5xtw5cnGQZb3jRSVcpj/3xGtaMGR4/ka7s/u2dFggC4K7hdH++cNzc/y/HHvhHac7u+ImTDd3utyuljH2lPydDe5YKV1JYKK+B1g6hYdaDiO3+1b6O3Yps/OuyioWMIjE+gwStzfFBLrErdkDZJR7xHwdzydbCLrq4y2BCfd8odnB9R47jJ2MpslJgiQOQFZwJp5kcmuLiII7PXUn7wHOzeTTvMrdveven9Exv7NA/DBp08ihZWqSotF4Gvw9GKU3xpFlSfhdNSzRraP2mZIsl1JJJr8mTuKwH4zYGEFn/n2ERdSzNu7canX1jv5quUWiUpAd8kKml0dAN7Mi8vhFUsJREc5sdZRCig=
