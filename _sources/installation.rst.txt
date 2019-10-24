@@ -32,7 +32,7 @@ If you're using `fish <https://fishshell.com/>`_ shell, instead add:
 Install from source
 -------------------
 
-To install ``manven`` from source, clone this repo, cd into the folder and do:
+To install ``manven`` from source, clone the `repo <https://github.com/AckslD/manven>`_, cd into the folder and do:
 
 .. code-block:: bash
 
