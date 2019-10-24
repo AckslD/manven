@@ -11,4 +11,5 @@ settings.ENVS_PATH = os.path.join(path_to_here, ".tmp")
 @pytest.fixture()
 def teardown():
     yield
-    shutil.rmtree(settings.ENVS_PATH)
+    if os.path.exists(settings.ENVS_PATH):
+        shutil.rmtree(settings.ENVS_PATH)
