@@ -11,4 +11,4 @@
 .coverage
 htmlcov/*
 
-manven/.to_execute
+manven/.to_execute.sh
