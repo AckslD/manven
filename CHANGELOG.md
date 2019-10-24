@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-For more details refer to the [documentation](https://gitlab.com/AckslD/manven).
+For more details refer to the [documentation](https://acksld.github.io/manven/).
 
 Upcoming
 --------
