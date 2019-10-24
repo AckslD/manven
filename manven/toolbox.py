@@ -14,7 +14,6 @@ def has_binary(binary_name):
         bool: Whether the binary is in the PATH.
     """
     output = run(["which", binary_name], capture_output=True)
-    print(f"output = {output}")
     return output.returncode == 0
 
 
