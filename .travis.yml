@@ -31,6 +31,7 @@ script:
 before_deploy:
   - cd docs
   - make build
+  - cd ..
 deploy:
   - provider: pypi
     user: adahlberg
