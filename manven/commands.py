@@ -11,7 +11,7 @@ _path_to_here = os.path.dirname(os.path.abspath(__file__))
 TO_EXECUTE_FILE = os.path.join(_path_to_here, ".to_execute.sh")
 
 
-def create_environment(environment_name, replace=False, no_manven=False):
+def create_environment(environment_name, *args, replace=False, no_manven=False, **virtualenv_ops):
     """
     Creates a (new if doesn't exist) environment with the given name.
 
@@ -19,6 +19,7 @@ def create_environment(environment_name, replace=False, no_manven=False):
         environment_name (str): The name of the environment.
         replace (bool): Whether to replace an existing environment with the same name
             with a fresh one. (default: False)
+        args, kwargs: Additional arguments passed to virtualenv.
     """
     # Check if virtualenv is installed and in the PATH
     if not has_virtualenv():
@@ -32,7 +33,7 @@ def create_environment(environment_name, replace=False, no_manven=False):
         else:
             return
 
-    _create_an_environment(environment_name, ENVS_PATH, no_manven=no_manven)
+    _create_an_environment(environment_name, ENVS_PATH, no_manven=no_manven, **virtualenv_ops)
 
 
 def activate_environment(environment_name, basefolder=ENVS_PATH):
@@ -143,7 +144,7 @@ def check_first_usage():
               "Press enter to continue...")
 
 
-def _create_an_environment(environment_name, basefolder=ENVS_PATH, no_manven=False):
+def _create_an_environment(environment_name, basefolder=ENVS_PATH, no_manven=False, **virtualenv_ops):
     """
     Creates a new environment with a given name in a given folder.
 
@@ -156,7 +157,10 @@ def _create_an_environment(environment_name, basefolder=ENVS_PATH, no_manven=Fal
         os.makedirs(basefolder)
 
     # Create the new environment
-    args = ["virtualenv", environment_name]
+    print(f"virtualenv_ops = {virtualenv_ops}")
+    options = _format_options(virtualenv_ops)
+    print(f"options = {options}")
+    args = ["virtualenv", *options, environment_name]
     output = run(args, cwd=basefolder)
 
     # Check that the command worked
@@ -165,6 +169,22 @@ def _create_an_environment(environment_name, basefolder=ENVS_PATH, no_manven=Fal
 
     if not no_manven:
         _install_manven(environment_name, basefolder=basefolder)
+
+
+def _format_options(virtualenv_ops):
+    """Formats the a dictionary of options to be passed as flags to virtualenv."""
+    options = []
+    for option_name, option_value in virtualenv_ops.items():
+        if option_value:  # If True or non-zero length string
+            option = option_name.replace('_', '-')
+            option = f"--{option}"
+            if not isinstance(option_value, bool):  # If it's a True/False flag we simply add the flag, not the value
+                option_value = option_value.replace('=', '')
+                option += f"={option_value}"
+            options.append(option)
+        else:
+            print(f"option_value {option_value} is not True")
+    return options
 
 
 def _install_manven(environment_name, basefolder=ENVS_PATH):

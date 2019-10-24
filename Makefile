@@ -41,7 +41,7 @@ _verified:
 
 verify: clean test-deps lint tests _verified
 
-install:
+install: test-deps
 	@${PIP} install -e .
 
 _remove_build:

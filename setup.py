@@ -8,13 +8,13 @@ with open("requirements.txt", 'r') as f:
 
 setuptools.setup(
     name="manven",
-    version="0.0.1",
+    version="0.1.0",
     author="Axel Dahlberg",
     author_email="axel.dahlberg12@gmail.com",
     description="Small CLI for managing virtual python environments",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://gitlab.com/AckslD/venv-manager",
+    url="https://github.com/AckslD/manven",
     include_package_data=True,
     scripts=["bin/manven", "bin/manven.fish"],
     packages=setuptools.find_packages(),

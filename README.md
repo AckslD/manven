@@ -1,8 +1,8 @@
-# manven (0.0.1)
+# manven (0.1.0)
 
 Welcome to manven's README.
 
-``manven`` is a small CLI wrapping the functionality of ``virtualenv`` to make **man**\ aging **v**\ irtual **env**\ ironments easier.
+`manven` is a small CLI wrapping the functionality of `virtualenv` to make **man**aging **v**irtual **env**ironments easier.
 Functionalities include creating, activating, removing and listing virtual environments, together with simply ways to quickly create and prune temporary environments.
 Follow the documentation below for how to install and how to get started.
 
