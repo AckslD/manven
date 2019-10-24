@@ -1,51 +1,47 @@
 language: python
 branches:
   only:
-    - master
-    - develop
+  - master
+  - develop
 matrix:
   include:
-  # - name: Python 3.5 on Linux
-  #   python: 3.5
-  # - name: Python 3.6 on Linux
-  #   python: 3.6
-  #   env:
-  #     - BUILD=True
   - name: Python 3.7 on Xenial Linux
     python: 3.7
     env:
-      - BUILD=True
+    - BUILD=True
     dist: xenial
   - name: Python 3.7 on macOS
     os: osx
     osx_image: xcode10.2
     language: shell
 before_install:
-  - make build
+- make build
 install:
-  - make test-deps
-  - pip3 install dist/*.whl
+- make test-deps
+- pip3 install dist/*.whl
 script:
-  - make lint
-  - make tests
+- make lint
+- make tests
 before_deploy:
-  - cd docs
-  - make build
-  - cd ..
+- cd docs
+- make build
+- cd ..
 deploy:
+  matrix:
   - provider: pypi
-    user: adahlberg
+    user: __token__
     password:
-      secure: DwhFEJlCg5477emRHek2sgoz6l51fJoH6Uf1MGV1v9OYwS0KJu9CZGzfxWf+4+S5HotK6lyQP16YxTnBUf5MUW3m7vn1q4QOPS02Ga3ETZ50ndxvnob0nxgZAkvHYpG2nSwx73g/yU2cHTqekBhtM2WUg7SzXGt8cwJblGKcckA4mZrbxOYOOmE6G4VpjtgTab107eJt5lgwnRan7UUV6bg/+FuR3nsrDtIuUm66jzhhdPCqpIRm2e7npkejpGm3zl3s8dpD7b1wN/q/3YCnMJvy6JcO9PfyFmB/nmVPhk9a+fuRGK8/uj/b5Vmk9t2NTpaqlaUvTp/S/agojiPl3+UxIfhpsaycWbtDNBhNPtbSkDcgyJDdnl0EsQZEnfIHci/7L7GdeYt0M+N7m8orApHuyhfORUind5hDLu/0UMDI7K/UhRFXTOMLrCKFtbk/02KxapBL51+SE/G2kgaXE6HCO+8knGob+LAdJY+1xL3WKhfB+5+DyIYoigJuJv0ObElYNuJJe5a0uy+0kKyjcEEozhr59ad4qoQr8u9piF8DoF3lVLBuadivtUME0mvlFHdm7ShNYE74HYjDzIkDGWtl5ONakpXH4dWOflGuJfG/tzJeN5sgGJMG6rkXNbN5OtU11CwUupII+/mtVrBv/mn4mEU2/3GW4qsmbpV2+k0=
-    distributions: "sdist bdist_wheel"
+      secure: eJSl2mM90iyRaJH4wzH/nfbxudeOjchOElueJKtcEbKRUlGM1BHNqGiTsSGtU3usbzMFulUjY5+LLC90hOPsbD1u+G/lu3G96FJyUc6+BA6+8SEtS2+Zp+bB3e54DfwYOGaGsM1zFM5N45Shp99npf+OAHi4RaeTN7CQMImKb09AW17iknqLzfy91al+56hakdk2u3b9ZTtyQ3USkkovmUhI+9KhAC3Suha1xuom7qolHMJQVtsMIZzAF7pmhubrEbtS2sbNNk0mv0B7Xya2i3iC+vKgLQwNOSLGr+6JfMLmXLd+KgLvpKlGjcQ2Nm9QohDuNb5QSqnkpKyE6gjyTK/yxO/FNoIxhDzyVtoAp3Y77cIKUO/Bm3hVa/hfKPaZ7aHImIygp0Ew4v1E4VXFXjb9USrXOr2eKICImqaH6EsAaH+sMvg3dXr6OtXH0rpAoMYm5Vw7qbGqx6XFYFJ4yLOSAtMZkwMyuzLMLzQmbJO8rDxPcMT8tMKmQiup632rMA85lnmbrXOzPKEuulqqnhen/s1O0QbHNIyJ9eHDBZtAyUNPQZZ7Mav/mRcSvuh+gKUWaSoYykGUD9EYDQaPTNISPwL0LWu+Yl8zmL6fxpgZqEJDtDrZ1YhFFSVy7xkfbOJix+lqQajOHKv0Gs9oyH7UB5DN5HR0fxggoyc0Z6E=
+    distributions: bdist_wheel
+    skip_existing: true
     on:
       branch: master
-      condition: $BUILD = True
+      condition: "$BUILD = True"
   - provider: pages
     skip_cleanup: true
-    github_token: $GITHUB_TOKEN
+    github_token: "$GITHUB_TOKEN"
     keep_history: true
     local_dir: docs/build/html
     on:
       branch: master
-      condition: $BUILD = True
+      condition: "$BUILD = True"
