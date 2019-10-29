@@ -157,9 +157,7 @@ def _create_an_environment(environment_name, basefolder=ENVS_PATH, no_manven=Fal
         os.makedirs(basefolder)
 
     # Create the new environment
-    print(f"virtualenv_ops = {virtualenv_ops}")
     options = _format_options(virtualenv_ops)
-    print(f"options = {options}")
     args = ["virtualenv", *options, environment_name]
     output = run(args, cwd=basefolder)
 
@@ -182,8 +180,6 @@ def _format_options(virtualenv_ops):
                 option_value = option_value.replace('=', '')
                 option += f"={option_value}"
             options.append(option)
-        else:
-            print(f"option_value {option_value} is not True")
     return options
 
 
