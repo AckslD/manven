@@ -6,6 +6,10 @@ For more details refer to the [documentation](https://acksld.github.io/manven/).
 Upcoming
 --------
 
+2019-11-12 (0.1.3)
+------------------
+* Fixed bug when using python < 3.7 since capture_output is not an argument to subprocess.run in this case.
+
 2019-11-12 (0.1.2)
 ------------------
 * Fixed bug in bin/manven

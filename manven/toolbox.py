@@ -1,4 +1,4 @@
-from subprocess import run
+from subprocess import check_output, CalledProcessError
 
 
 def has_binary(binary_name):
@@ -13,8 +13,12 @@ def has_binary(binary_name):
     Returns:
         bool: Whether the binary is in the PATH.
     """
-    output = run(["which", binary_name], capture_output=True)
-    return output.returncode == 0
+    try:
+        check_output(["which", binary_name])
+    except CalledProcessError:
+        return False
+    else:
+        return True
 
 
 def has_virtualenv():
