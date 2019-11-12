@@ -7,7 +7,7 @@ Welcome to manven's documentation!
 ============================================
 
 ``manven`` is a small CLI wrapping the functionality of ``virtualenv`` to make **man**\ aging **v**\ irtual **env**\ ironments easier.
-Functionalities include creating, activating, removing and listing virtual environments, together with simply ways to quickly create and prune temporary environments.
+Functionalities include creating, activating, removing and listing virtual environments, together with simple ways to quickly create and prune temporary environments.
 Follow the documentation below for how to install and how to get started.
 The source code can be found at https://github.com/AckslD/manven.
 
