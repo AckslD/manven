@@ -1,6 +1,6 @@
 *.pyc
 *.DS_Store
-/docs/_build/*
+/docs/build/*
 /docs/_static/*
 /docs/_templates/*
 /build/*
@@ -10,3 +10,5 @@
 .idea/*
 .coverage
 htmlcov/*
+
+manven/.to_execute.sh

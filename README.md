@@ -1,4 +1,4 @@
-# manven (0.1.0)
+# manven (0.1.3)
 
 Welcome to manven's README.
 
@@ -10,8 +10,8 @@ Happy venv-ing!
 
 ## Installation
 
-See [installation]().
+See [installation](https://acksld.github.io/manven/installation.html).
 
 ## Getting started
 
-See [getting started]().
+See [getting started](https://acksld.github.io/manven/usage.html).
