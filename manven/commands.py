@@ -1,14 +1,15 @@
 import os
 import shutil
-from subprocess import run
+from subprocess import run, check_output
 from itertools import count
 
-from manven.toolbox import has_virtualenv
+from manven.toolbox import has_virtualenv, current_env, is_current_temp
 from manven.settings import ENVS_PATH
 
 
 _path_to_here = os.path.dirname(os.path.abspath(__file__))
-TO_EXECUTE_FILE = os.path.join(_path_to_here, ".to_execute.sh")
+_to_execute_filename = ".to_execute.sh"
+TO_EXECUTE_FILE = os.path.join(_path_to_here, _to_execute_filename)
 
 
 def create_environment(environment_name, *args, replace=False, no_manven=False, **virtualenv_ops):
@@ -91,6 +92,9 @@ def activate_temp_environment(no_manven=False):
 
 def prune_temp_environments():
     """Prunes all temporary environments."""
+    if is_current_temp():
+        raise RuntimeError("Cannot prune temporary environments when one is currently active ({})"
+                           .format(current_env()))
     path_to_temp = _get_temp_path()
     temp_environments = sorted(_list_temporary_environments())
     for temp_environment in temp_environments:
@@ -104,6 +108,8 @@ def remove_environment(environment_name):
     Args:
         environment_name (str): The name of the environment.
     """
+    if current_env() == environment_name:
+        raise ValueError("Cannot remove the currently activated environment.")
     if _has_environment(environment_name):
         path_to_venv = _get_absolute_path(environment_name)
         shutil.rmtree(path_to_venv)
@@ -201,6 +207,18 @@ def _install_manven(environment_name, basefolder=ENVS_PATH):
 
     # Check that the command worked
     message = "Something went wrong when installing manven"
+    _assert_output(output, message)
+
+    # Add the to execute file such that the first time text is not printed
+    python = os.path.join(basefolder, environment_name, "bin", "python")
+    args = [python, "-m", "manven"]
+    output = check_output(args).decode('utf-8').strip()
+    venv_to_execute_file = os.path.join(output, _to_execute_filename)
+    args = ["touch", venv_to_execute_file]
+    output = run(args)
+
+    # Check that the command worked
+    message = "Something went wrong when adding the file {}".format(TO_EXECUTE_FILE)
     _assert_output(output, message)
 
 
