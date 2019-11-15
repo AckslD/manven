@@ -29,6 +29,17 @@ If you're using `fish <https://fishshell.com/>`_ shell, instead add:
 
    alias smanven 'source (which manven.fish)'
 
+.. note::
+
+   If you are using `pyenv <https://github.com/pyenv/pyenv>`_ you should instead add the alias
+
+   .. code-block:: bash
+
+      alias smanven='source $(pyenv which manven)'
+
+   and similarly if you are using fish.
+
+
 Install from source
 -------------------
 
