@@ -44,8 +44,7 @@ def current_env():
     virtual_env = os.environ.get('VIRTUAL_ENV')
     if virtual_env is None:
         return None
-    else:
-        return os.path.relpath(virtual_env, ENVS_PATH)
+    return os.path.relpath(virtual_env, ENVS_PATH)
 
 
 def is_current_temp():
@@ -56,4 +55,7 @@ def is_current_temp():
         bool: True if the current environment is a temporary one.
     """
 
-    return current_env().startswith(".temp/")
+    current = current_env()
+    if current is None:
+        return False
+    return current.startswith(".temp/")

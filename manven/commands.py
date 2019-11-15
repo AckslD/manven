@@ -1,6 +1,6 @@
 import os
 import shutil
-from subprocess import run
+from subprocess import run, check_output
 from itertools import count
 
 from manven.toolbox import has_virtualenv, current_env, is_current_temp
@@ -8,7 +8,8 @@ from manven.settings import ENVS_PATH
 
 
 _path_to_here = os.path.dirname(os.path.abspath(__file__))
-TO_EXECUTE_FILE = os.path.join(_path_to_here, ".to_execute.sh")
+_to_execute_filename = ".to_execute.sh"
+TO_EXECUTE_FILE = os.path.join(_path_to_here, _to_execute_filename)
 
 
 def create_environment(environment_name, *args, replace=False, no_manven=False, **virtualenv_ops):
@@ -206,6 +207,18 @@ def _install_manven(environment_name, basefolder=ENVS_PATH):
 
     # Check that the command worked
     message = "Something went wrong when installing manven"
+    _assert_output(output, message)
+
+    # Add the to execute file such that the first time text is not printed
+    python = os.path.join(basefolder, environment_name, "bin", "python")
+    args = [python, "-m", "manven"]
+    output = check_output(args).decode('utf-8').strip()
+    venv_to_execute_file = os.path.join(output, _to_execute_filename)
+    args = ["touch", venv_to_execute_file]
+    output = run(args)
+
+    # Check that the command worked
+    message = "Something went wrong when adding the file {}".format(TO_EXECUTE_FILE)
     _assert_output(output, message)
 
 
