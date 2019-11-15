@@ -6,6 +6,11 @@ For more details refer to the [documentation](https://acksld.github.io/manven/).
 Upcoming
 --------
 
+2019-11-15 (0.1.4)
+------------------
+* When removing environments it is now checked that this is not the current one.
+* The test printed the first time one uses manven is now not printed in new environments.
+
 2019-11-12 (0.1.3)
 ------------------
 * Fixed bug when using python < 3.7 since capture_output is not an argument to subprocess.run in this case.
