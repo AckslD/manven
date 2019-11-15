@@ -1,4 +1,7 @@
+import os
 from subprocess import check_output, CalledProcessError
+
+from manven.settings import ENVS_PATH
 
 
 def has_binary(binary_name):
@@ -29,3 +32,28 @@ def has_virtualenv():
         bool: Whether the virtualenv is installed.
     """
     return has_binary("virtualenv")
+
+
+def current_env():
+    """
+    Returns the current activated virtualenv.
+
+    Returns:
+        str or None: This is done by checking the environment variable VIRTUAL_ENV.
+    """
+    virtual_env = os.environ.get('VIRTUAL_ENV')
+    if virtual_env is None:
+        return None
+    else:
+        return os.path.relpath(virtual_env, ENVS_PATH)
+
+
+def is_current_temp():
+    """
+    Checks if the current environment is a temporary environment.
+
+    Returns:
+        bool: True if the current environment is a temporary one.
+    """
+
+    return current_env().startswith(".temp/")

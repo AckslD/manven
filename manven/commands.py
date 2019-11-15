@@ -3,7 +3,7 @@ import shutil
 from subprocess import run
 from itertools import count
 
-from manven.toolbox import has_virtualenv
+from manven.toolbox import has_virtualenv, current_env, is_current_temp
 from manven.settings import ENVS_PATH
 
 
@@ -91,6 +91,9 @@ def activate_temp_environment(no_manven=False):
 
 def prune_temp_environments():
     """Prunes all temporary environments."""
+    if is_current_temp():
+        raise RuntimeError("Cannot prune temporary environments when one is currently active ({})"
+                           .format(current_env()))
     path_to_temp = _get_temp_path()
     temp_environments = sorted(_list_temporary_environments())
     for temp_environment in temp_environments:
@@ -104,6 +107,8 @@ def remove_environment(environment_name):
     Args:
         environment_name (str): The name of the environment.
     """
+    if current_env() == environment_name:
+        raise ValueError("Cannot remove the currently activated environment.")
     if _has_environment(environment_name):
         path_to_venv = _get_absolute_path(environment_name)
         shutil.rmtree(path_to_venv)
