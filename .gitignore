@@ -12,3 +12,4 @@
 htmlcov/*
 
 manven/.to_execute.sh
+manven/.last_env

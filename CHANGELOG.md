@@ -6,6 +6,10 @@ For more details refer to the [documentation](https://acksld.github.io/manven/).
 Upcoming
 --------
 
+2020-01-31 (0.2.0)
+------------------
+* Added functionality to activate last activated environment
+
 2019-11-15 (0.1.4)
 ------------------
 * When removing environments it is now checked that this is not the current one.

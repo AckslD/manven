@@ -2,7 +2,7 @@ import click
 import manven
 from manven.commands import create_environment, activate_environment, list_environments,\
     remove_environment, deactivate_environment, reset_to_execute, check_first_usage,\
-    activate_temp_environment, prune_temp_environments
+    activate_temp_environment, prune_temp_environments, open_last_environment
 from manven.settings import ENVS_PATH
 
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
@@ -29,6 +29,13 @@ new_op = click.option(
 no_manven_op = click.option(
     "--no-manven",
     help="Don't install manven in the new environment.",
+    is_flag=True,
+)
+
+include_all = click.option(
+    "-a",
+    "--all",
+    help="Whether to include temporary environments",
     is_flag=True,
 )
 
@@ -148,12 +155,7 @@ def remove(environment_name):
 ########
 
 @cli.command()
-@click.option(
-    "-a",
-    "--all",
-    help="Whether to include temporary environments",
-    is_flag=True,
-)
+@include_all
 def list(all=False):
     """
     Lists all available virtual environments.
@@ -188,6 +190,18 @@ def prune():
     Prunes (removes) all temporary environments.
     """
     prune_temp_environments()
+
+
+#########
+# last #
+#########
+
+@cli.command()
+def last():
+    """
+    Opens the last activated environment.
+    """
+    open_last_environment()
 
 
 ################

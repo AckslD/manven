@@ -10,6 +10,8 @@ from manven.settings import ENVS_PATH
 _path_to_here = os.path.dirname(os.path.abspath(__file__))
 _to_execute_filename = ".to_execute.sh"
 TO_EXECUTE_FILE = os.path.join(_path_to_here, _to_execute_filename)
+_last_env_filename = ".last_env"
+LAST_ENV = os.path.join(_path_to_here, _last_env_filename)
 
 
 def create_environment(environment_name, *args, replace=False, no_manven=False, **virtualenv_ops):
@@ -46,7 +48,7 @@ def activate_environment(environment_name, basefolder=ENVS_PATH):
         basefolder (str): The folder to contain the environment.
     """
     if not _has_environment(environment_name, basefolder=basefolder):
-        raise ValueError("Environment {environment_name} does not exist")
+        raise ValueError(f"Environment {environment_name} does not exist")
 
     # Get the path to the activate script, based on the shell
     activate_script = _get_activate_script_path(environment_name, basefolder=basefolder)
@@ -54,6 +56,9 @@ def activate_environment(environment_name, basefolder=ENVS_PATH):
     # Source the activate file
     args = ["source", activate_script]
     _write_execute_to_file(args)
+
+    # Update last activated environment
+    _update_last_activated_environment(environment_name, basefolder)
 
 
 def list_environments(include_temporary=False):
@@ -121,6 +126,19 @@ def deactivate_environment():
     """
     args = ["deactivate"]
     _write_execute_to_file(args)
+
+
+def open_last_environment():
+    """
+    Activates the last activated environment by writing to a file.
+    """
+    if not os.path.exists(LAST_ENV):
+        print("No environment has been activated yet")
+        return
+
+    with open(LAST_ENV, 'r') as f:
+        environment_name, basefolder = f.read().split('\n')
+    activate_environment(environment_name, basefolder=basefolder)
 
 
 def reset_to_execute():
@@ -240,6 +258,18 @@ def _list_temporary_environments():
         return [venv for venv in os.listdir(temp_path) if _is_environment(venv, basefolder=temp_path)]
     else:
         return []
+
+
+def _update_last_activated_environment(environment_name, basefolder):
+    """
+    Updates the last activated environment by writing to a file.
+
+    Args:
+        environment_name (str): The name of the environment.
+        basefolder (str): The folder to contain the environment.
+    """
+    with open(LAST_ENV, 'w') as f:
+        f.write(f"{environment_name}\n{basefolder}")
 
 
 def _is_environment(environment_name, basefolder=ENVS_PATH):

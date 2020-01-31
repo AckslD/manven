@@ -8,7 +8,7 @@ with open("requirements.txt", 'r') as f:
 
 setuptools.setup(
     name="manven",
-    version="0.1.4",
+    version="0.2.0",
     author="Axel Dahlberg",
     author_email="axel.dahlberg12@gmail.com",
     description="Small CLI for managing virtual python environments",
