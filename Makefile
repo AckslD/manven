@@ -1,7 +1,6 @@
 PYTHON         = python3
 PIP            = pip3
 SOURCE_DIR     = manven
-TESTS_DIR      = tests
 MIN_COV        = 75
 
 help:
