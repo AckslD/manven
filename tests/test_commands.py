@@ -19,21 +19,21 @@ from manven.settings import ENVS_PATH
     "hello",
 ])
 def test_create_environment(environment_name, teardown):
-    create_environment(environment_name, no_manven=True)
+    create_environment(environment_name, default_pkgs=[])
     assert os.path.exists(os.path.join(ENVS_PATH, environment_name))
 
 
 def test_create_replace_environment(teardown):
     environment_name = "test"
-    create_environment(environment_name, no_manven=True)
+    create_environment(environment_name, default_pkgs=[])
     folder_path = os.path.join(ENVS_PATH, environment_name, "tmp_folder")
     os.mkdir(folder_path)
     assert os.path.exists(folder_path)
     # Check that replace=False keeps the folder we made
-    create_environment(environment_name, replace=False, no_manven=True)
+    create_environment(environment_name, replace=False, default_pkgs=[])
     assert os.path.exists(folder_path)
     # Check that replace=True removes the folder we made
-    create_environment(environment_name, replace=True, no_manven=True)
+    create_environment(environment_name, replace=True, default_pkgs=[])
     assert not os.path.exists(folder_path)
 
 
@@ -43,7 +43,7 @@ def test_create_replace_environment(teardown):
     "hello",
 ])
 def test_activate_environment(environment_name, teardown):
-    create_environment(environment_name, no_manven=True)
+    create_environment(environment_name, default_pkgs=[])
     activate_environment(environment_name)
 
     # Read what's in the file to be executed
@@ -68,9 +68,9 @@ def test_list_environments(environment_names, num_temp_envs, teardown):
     Also tests activate_temp_environment and prune_temp_environments
     """
     for environment_name in environment_names:
-        create_environment(environment_name, no_manven=True)
+        create_environment(environment_name, default_pkgs=[])
     for _ in range(num_temp_envs):
-        activate_temp_environment(no_manven=True)
+        activate_temp_environment(default_pkgs=[])
 
     environments = list_environments()
     assert sorted(environments) == sorted(environment_names)
@@ -90,7 +90,7 @@ def test_list_environments(environment_names, num_temp_envs, teardown):
 ])
 def test_remove_environments(environment_names, to_remove, teardown):
     for environment_name in environment_names:
-        create_environment(environment_name, no_manven=True)
+        create_environment(environment_name, default_pkgs=[])
     for environment_name in to_remove:
         remove_environment(environment_name)
 

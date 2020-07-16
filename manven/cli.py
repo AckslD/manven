@@ -3,7 +3,7 @@ import manven
 from manven.commands import create_environment, activate_environment, list_environments,\
     remove_environment, deactivate_environment, reset_to_execute, check_first_usage,\
     activate_temp_environment, prune_temp_environments, open_last_environment
-from manven.settings import ENVS_PATH
+from manven.settings import ENVS_PATH, DEFAULT_PKGS
 
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 
@@ -26,10 +26,13 @@ new_op = click.option(
     is_flag=True,
 )
 
-no_manven_op = click.option(
-    "--no-manven",
-    help="Don't install manven in the new environment.",
-    is_flag=True,
+default_pkgs_op = click.option(
+    "-i", "--install",
+    type=str,
+    default=DEFAULT_PKGS,
+    multiple=True,
+    help="Install a package in a new environment. Can be specified multiple times. "
+         "Overrides what is in the config file.",
 )
 
 include_all = click.option(
@@ -100,13 +103,25 @@ def version():
 @cli.command()
 @environment_name_arg
 @new_op
-@no_manven_op
+@default_pkgs_op
 @virtualenv_ops
-def activate(environment_name, *args, new=False, no_manven=False, **virtualenv_ops):
+def activate(
+    environment_name,
+    *args,
+    new=False,
+    install=DEFAULT_PKGS,
+    **virtualenv_ops
+):
     """
     Activates (and creates if not exists) a virtual environment.
     """
-    create_environment(environment_name, *args, replace=new, no_manven=no_manven, **virtualenv_ops)
+    create_environment(
+        environment_name,
+        *args,
+        replace=new,
+        default_pkgs=install,
+        **virtualenv_ops
+    )
     activate_environment(environment_name)
 
 
@@ -129,12 +144,25 @@ def deactivate():
 @cli.command()
 @environment_name_arg
 @new_op
-@no_manven_op
-def create(environment_name, new=False, no_manven=False):
+@default_pkgs_op
+@virtualenv_ops
+def create(
+    environment_name,
+    *args,
+    new=False,
+    install=DEFAULT_PKGS,
+    **virtualenv_ops,
+):
     """
     Creates (if not exists) a virtual environment but does not activate it.
     """
-    create_environment(environment_name, replace=new, no_manven=no_manven)
+    create_environment(
+        environment_name,
+        *args,
+        replace=new,
+        default_pkgs=install,
+        **virtualenv_ops,
+    )
 
 
 ##########
@@ -170,14 +198,21 @@ def list(all=False):
 ########
 
 @cli.command()
-@no_manven_op
-def temp(no_manven=False):
+@default_pkgs_op
+@virtualenv_ops
+def temp(
+    install=DEFAULT_PKGS,
+    **virtualenv_ops
+):
     """
     Creates and activates a temporary environment.
 
     Temporary environments can be pruned with the ``prune`` command.
     """
-    activate_temp_environment(no_manven=no_manven)
+    activate_temp_environment(
+        default_pkgs=install,
+        **virtualenv_ops
+    )
 
 
 #########
