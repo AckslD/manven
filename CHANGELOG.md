@@ -5,6 +5,8 @@ For more details refer to the [documentation](https://acksld.github.io/manven/).
 
 Upcoming
 --------
+* Added possibility to specify default packages to be installed in new environments.
+  This can be done by either specifying the entry `DEFAULT_PKGS` in the config-file, e.g. as `[manven, neovim]` or by using the `-i/--install`-flag multiple times for each package.
 
 2020-01-31 (0.2.0)
 ------------------

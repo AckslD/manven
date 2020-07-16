@@ -4,7 +4,7 @@ from subprocess import run, check_output
 from itertools import count
 
 from manven.toolbox import has_virtualenv, current_env, is_current_temp
-from manven.settings import ENVS_PATH
+from manven.settings import ENVS_PATH, DEFAULT_PKGS
 
 
 _path_to_here = os.path.dirname(os.path.abspath(__file__))
@@ -14,7 +14,13 @@ _last_env_filename = ".last_env"
 LAST_ENV = os.path.join(_path_to_here, _last_env_filename)
 
 
-def create_environment(environment_name, *args, replace=False, no_manven=False, **virtualenv_ops):
+def create_environment(
+    environment_name,
+    *args,
+    replace=False,
+    default_pkgs=DEFAULT_PKGS,
+    **virtualenv_ops
+):
     """
     Creates a (new if doesn't exist) environment with the given name.
 
@@ -36,7 +42,11 @@ def create_environment(environment_name, *args, replace=False, no_manven=False, 
         else:
             return
 
-    _create_an_environment(environment_name, ENVS_PATH, no_manven=no_manven, **virtualenv_ops)
+    _create_an_environment(
+        environment_name=environment_name,
+        default_pkgs=default_pkgs,
+        **virtualenv_ops
+    )
 
 
 def activate_environment(environment_name, basefolder=ENVS_PATH):
@@ -85,13 +95,18 @@ def list_environments(include_temporary=False):
     return environments
 
 
-def activate_temp_environment(no_manven=False):
+def activate_temp_environment(default_pkgs=DEFAULT_PKGS, **virtualenv_ops):
     """
     Creates and activates a new temporary environment.
     """
     path_to_temp = _get_temp_path()
     temp_env_name = _get_unused_temp_name(path_to_temp)
-    _create_an_environment(temp_env_name, path_to_temp, no_manven=no_manven)
+    _create_an_environment(
+        environment_name=temp_env_name,
+        basefolder=path_to_temp,
+        default_pkgs=default_pkgs,
+        **virtualenv_ops
+    )
     activate_environment(temp_env_name, basefolder=path_to_temp)
 
 
@@ -168,7 +183,12 @@ def check_first_usage():
               "Press enter to continue...")
 
 
-def _create_an_environment(environment_name, basefolder=ENVS_PATH, no_manven=False, **virtualenv_ops):
+def _create_an_environment(
+    environment_name,
+    basefolder=ENVS_PATH,
+    default_pkgs=DEFAULT_PKGS,
+    **virtualenv_ops
+):
     """
     Creates a new environment with a given name in a given folder.
 
@@ -189,8 +209,11 @@ def _create_an_environment(environment_name, basefolder=ENVS_PATH, no_manven=Fal
     message = f"Something went wrong when creating the environment {environment_name}"
     _assert_output(output, message)
 
-    if not no_manven:
-        _install_manven(environment_name, basefolder=basefolder)
+    _install_packages(
+        environment_name,
+        packages=default_pkgs,
+        basefolder=basefolder,
+    )
 
 
 def _format_options(virtualenv_ops):
@@ -207,37 +230,55 @@ def _format_options(virtualenv_ops):
     return options
 
 
-def _install_manven(environment_name, basefolder=ENVS_PATH):
+def _install_packages(environment_name, packages, basefolder=ENVS_PATH):
     """
-    Installs manven.
-    This is used so that manven can also be used in new environments.
+    Installs packages to an environment.
 
     Args:
         environment_name (str): The name of the environment.
+        packages (list): List of strings specifying python packages to install
+        basefolder (str): The folder to contain the environment.
+    """
+    for package in packages:
+        _install_package(
+            environment_name=environment_name,
+            package=package,
+            basefolder=basefolder,
+        )
+
+
+def _install_package(environment_name, package, basefolder=ENVS_PATH):
+    """
+    Installs packages to an environment.
+
+    Args:
+        environment_name (str): The name of the environment.
+        package (str): String specifying python package to install
         basefolder (str): The folder to contain the environment.
     """
     pip = os.path.join(basefolder, environment_name, "bin", "pip")
     if not os.path.exists(pip):
         raise ValueError(f"Environment {environment_name} at {basefolder} does not exist.")
 
-    args = [pip, "install", "manven"]
+    args = [pip, "install", package]
     output = run(args)
 
     # Check that the command worked
-    message = "Something went wrong when installing manven"
+    message = f"Something went wrong when installing {package}"
     _assert_output(output, message)
 
-    # Add the to execute file such that the first time text is not printed
-    python = os.path.join(basefolder, environment_name, "bin", "python")
-    args = [python, "-m", "manven"]
-    output = check_output(args).decode('utf-8').strip()
-    venv_to_execute_file = os.path.join(output, _to_execute_filename)
-    args = ["touch", venv_to_execute_file]
-    output = run(args)
+    if package == "manven":
+        # Add the to execute file such that the first time text is not printed when using manven
+        python = os.path.join(basefolder, environment_name, "bin", "python")
+        args = [python, "-m", "manven"]
+        output = check_output(args).decode('utf-8').strip()
+        venv_to_execute_file = os.path.join(output, _to_execute_filename)
+        args = ["touch", venv_to_execute_file]
+        output = run(args)
 
-    # Check that the command worked
-    message = "Something went wrong when adding the file {}".format(TO_EXECUTE_FILE)
-    _assert_output(output, message)
+        # Check that the command worked
+        message = "Something went wrong when adding the file {}".format(TO_EXECUTE_FILE)
+        _assert_output(output, message)
 
 
 def _write_execute_to_file(args):
