@@ -15,3 +15,6 @@ See [installation](https://acksld.github.io/manven/installation.html).
 ## Getting started
 
 See [getting started](https://acksld.github.io/manven/usage.html).
+
+## Completions
+If you're using `zsh` you can copy (or symlink) the file `completions/_manven` to a folder in your `$fpath` to enable completions of commands and virtual environments to activate. This requires `compinit` to have been activated in your `.zshrc`.
