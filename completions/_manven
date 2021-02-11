@@ -28,7 +28,7 @@ case "$state" in
   (args)
     case $line[1] in
       (activate|remove)
-        _values 'venvs' $(manven list) && ret=0
+        _values 'venvs' $(manven list -a) && ret=0
       ;;
       (get)
         local settings; settings=(
