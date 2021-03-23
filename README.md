@@ -8,6 +8,8 @@ Follow the documentation below for how to install and how to get started.
 
 Happy venv-ing!
 
+![](manven.gif)
+
 ## Installation
 
 See [installation](https://acksld.github.io/manven/installation.html).
