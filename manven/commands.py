@@ -6,7 +6,6 @@ from itertools import count
 from manven.toolbox import has_virtualenv, current_env, is_current_temp
 from manven.settings import ENVS_PATH, DEFAULT_PKGS
 
-
 _path_to_here = os.path.dirname(os.path.abspath(__file__))
 _to_execute_filename = ".to_execute.sh"
 TO_EXECUTE_FILE = os.path.join(_path_to_here, _to_execute_filename)
@@ -16,7 +15,6 @@ LAST_ENV = os.path.join(_path_to_here, _last_env_filename)
 
 def create_environment(
     environment_name,
-    *args,
     replace=False,
     default_pkgs=DEFAULT_PKGS,
     **virtualenv_ops
@@ -28,7 +26,7 @@ def create_environment(
         environment_name (str): The name of the environment.
         replace (bool): Whether to replace an existing environment with the same name
             with a fresh one. (default: False)
-        args, kwargs: Additional arguments passed to virtualenv.
+        virtualenv_ops: Additional arguments passed to virtualenv.
     """
     # Check if virtualenv is installed and in the PATH
     if not has_virtualenv():
