@@ -1,4 +1,4 @@
-#compdef manven
+#compdef manven smanven
 
 typeset -A opt_args
 
