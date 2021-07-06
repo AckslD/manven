@@ -4,21 +4,29 @@ Getting started
 Configure
 ---------
 
-You can chose where you want ``manven`` to put the virtual environments by adding a file of the form
+To configure ``manven`` create a config such as the following which contains the default values.
 
 .. code-block:: text
 
    [manven]
-   ENVS_PATH=path/to/your/dir
-   DEFAULT_PKGS=[manven, neovim]
+   envs_path=~/venvs
+   default_pkgs=[manven, neovim]
+   ipykernel=false
 
-which can either be:
+where:
+
+* ``envs_path``: Specifies where virtual environments should be stored.
+* ``default_pkgs``: Default packages that should be installed in any new environment.
+* ``ipykernel``: Set this to `true` if you want `ipykernel` to be installed and this environment added.
+
+The config file can either be:
 
 1. In the current directory with the name ``.manven.conf``.
 2. In the home directory (``~``/``$HOME``), with the name ``.manven.conf``.
 3. In the directory ``~/.config/manven/`` with the name ``manven.conf``.
 
 If there is more than one file as above the first in the list will be used.
+Any config value can also be specified (overridden) as a flag to `manven`.
 
 The rest of this section assumes that you set the alias ``smanven`` as recommended in the :doc:`installation`.
 

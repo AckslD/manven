@@ -47,8 +47,9 @@ def _load_config(file_path):
 
 def _config_from_defaults():
     return {
-        "ENVS_PATH": "~/venvs",
-        "DEFAULT_PKGS": ["manven"],
+        "envs_path": "~/venvs",
+        "default_pkgs": ["manven"],
+        "ipykernel": False,
     }
 
 
@@ -72,10 +73,9 @@ _config_functions = [
 ]
 
 
-_config = _get_config()
-_default_conf = _config_from_defaults()
-for setting, default in _default_conf.items():
-    if setting not in _config:
-        raise RuntimeError(f"The entry '{setting}' must be in a configuration file")
-ENVS_PATH = os.path.expanduser(_config["ENVS_PATH"])
-DEFAULT_PKGS = _parse_default_pkgs(_config["DEFAULT_PKGS"])
+_config = _config_from_defaults()
+_config.update(_get_config())
+ENVS_PATH = os.path.expanduser(_config["envs_path"])
+DEFAULT_PKGS = _parse_default_pkgs(_config["default_pkgs"])
+INSTALL_IPY_KERNEL = _config["ipykernel"]
+assert isinstance(INSTALL_IPY_KERNEL, bool)

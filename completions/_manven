@@ -1,4 +1,4 @@
-#compdef manven
+#compdef manven smanven
 
 typeset -A opt_args
 
@@ -15,6 +15,7 @@ case "$state" in
       'create:Create an environment'
       'deactivate:Deactivate an environment'
       'get:Return a setting'
+      'ipykernel:Installs the virtual environment in the ipy kernel'
       'last:Activate last environment'
       'list:List environments'
       'prune:Remove temporary environments'

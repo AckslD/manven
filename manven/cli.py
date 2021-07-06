@@ -2,8 +2,8 @@ import click
 import manven
 from manven.commands import create_environment, activate_environment, list_environments,\
     remove_environment, deactivate_environment, reset_to_execute, check_first_usage,\
-    activate_temp_environment, prune_temp_environments, open_last_environment
-from manven.settings import ENVS_PATH, DEFAULT_PKGS
+    activate_temp_environment, prune_temp_environments, open_last_environment, install_ipy_kernel
+from manven.settings import ENVS_PATH, DEFAULT_PKGS, INSTALL_IPY_KERNEL
 
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 
@@ -33,6 +33,14 @@ default_pkgs_op = click.option(
     multiple=True,
     help="Install a package in a new environment. Can be specified multiple times. "
          "Overrides what is in the config file.",
+)
+
+install_ipy_kernel_op = click.option(
+    "--ipykernel",
+    type=bool,
+    default=INSTALL_IPY_KERNEL,
+    is_flag=True,
+    help="Install the new environment in the IPython kernel so that it can be chosen in eg jupyter",
 )
 
 include_all = click.option(
@@ -104,12 +112,14 @@ def version():
 @environment_name_arg
 @new_op
 @default_pkgs_op
+@install_ipy_kernel_op
 @virtualenv_ops
 def activate(
     environment_name,
     *args,
     new=False,
     install=DEFAULT_PKGS,
+    ipykernel=INSTALL_IPY_KERNEL,
     **virtualenv_ops
 ):
     """
@@ -120,6 +130,7 @@ def activate(
         *args,
         replace=new,
         default_pkgs=install,
+        ipykernel=ipykernel,
         **virtualenv_ops
     )
     activate_environment(environment_name)
@@ -145,12 +156,14 @@ def deactivate():
 @environment_name_arg
 @new_op
 @default_pkgs_op
+@install_ipy_kernel_op
 @virtualenv_ops
 def create(
     environment_name,
     *args,
     new=False,
     install=DEFAULT_PKGS,
+    ipykernel=INSTALL_IPY_KERNEL,
     **virtualenv_ops,
 ):
     """
@@ -161,6 +174,7 @@ def create(
         *args,
         replace=new,
         default_pkgs=install,
+        ipykernel=ipykernel,
         **virtualenv_ops,
     )
 
@@ -199,9 +213,11 @@ def list(all=False):
 
 @cli.command()
 @default_pkgs_op
+@install_ipy_kernel_op
 @virtualenv_ops
 def temp(
     install=DEFAULT_PKGS,
+    ipykernel=INSTALL_IPY_KERNEL,
     **virtualenv_ops
 ):
     """
@@ -211,6 +227,7 @@ def temp(
     """
     activate_temp_environment(
         default_pkgs=install,
+        ipykernel=ipykernel,
         **virtualenv_ops
     )
 
@@ -237,6 +254,19 @@ def last():
     Opens the last activated environment.
     """
     open_last_environment()
+
+
+######################
+# install ipy kernel #
+######################
+
+@cli.command()
+def ipykernel():
+    """
+    Installs the virtual environment in the ipy kernel.
+    (installs the ipykernel package to do this)
+    """
+    install_ipy_kernel()
 
 
 ################

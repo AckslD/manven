@@ -1,10 +1,24 @@
 import os
+import shutil
+import json
+from subprocess import check_output
+
 import pytest
 
-from manven.commands import create_environment, activate_environment, list_environments,\
-    remove_environment, deactivate_environment, reset_to_execute,\
-    activate_temp_environment, prune_temp_environments,\
-    TO_EXECUTE_FILE, _get_activate_script_name
+from manven.commands import (
+    create_environment,
+    activate_environment,
+    list_environments,
+    remove_environment,
+    deactivate_environment,
+    reset_to_execute,
+    activate_temp_environment,
+    prune_temp_environments,
+    open_last_environment,
+    TO_EXECUTE_FILE,
+    _get_activate_script_name,
+    _get_environment_bin_path,
+)
 from manven.settings import ENVS_PATH
 
 ########################################################################
@@ -130,3 +144,40 @@ def test_reset_to_execute():
         lines = f.readlines()
 
     assert len(lines) == 0
+
+
+def test_open_last_environment(teardown):
+    environment_name = 'last_env'
+    create_environment(environment_name, default_pkgs=[])
+    activate_environment(environment_name)
+    open_last_environment()
+
+    # Read what's in the file to be executed
+    with open(TO_EXECUTE_FILE, 'r') as f:
+        lines = f.readlines()
+
+    # Check that the content of the file is correct
+    assert len(lines) == 1
+    line = lines[0]
+    activate_script_name = _get_activate_script_name()
+    activate_script_path = os.path.join(ENVS_PATH, environment_name, "bin", activate_script_name)
+    assert line == f"source {activate_script_path}"
+
+
+def test_install_ipy_kernel(teardown):
+    environment_name = 'ipy'
+    create_environment(environment_name, ipykernel=True)
+    jupyter_path = _get_jupyter_path(environment_name)
+    kernel_path = os.path.join(jupyter_path, "kernels", environment_name)
+    kernel_json_path = os.path.join(kernel_path, "kernel.json")
+    assert os.path.exists(kernel_json_path)
+    with open(kernel_json_path, 'r') as f:
+        kernel_data = json.load(f)
+    assert kernel_data['argv'][0].startswith(ENVS_PATH)
+    assert kernel_data['display_name'] == environment_name
+    shutil.rmtree(kernel_path)
+
+
+def _get_jupyter_path(environment_name):
+    jupyter = os.path.join(_get_environment_bin_path(environment_name), 'jupyter')
+    return check_output([jupyter, '--data-dir']).decode('utf-8').strip()

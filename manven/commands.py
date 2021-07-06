@@ -4,7 +4,7 @@ from subprocess import run, check_output
 from itertools import count
 
 from manven.toolbox import has_virtualenv, current_env, is_current_temp
-from manven.settings import ENVS_PATH, DEFAULT_PKGS
+from manven.settings import ENVS_PATH, DEFAULT_PKGS, INSTALL_IPY_KERNEL
 
 
 _path_to_here = os.path.dirname(os.path.abspath(__file__))
@@ -16,9 +16,9 @@ LAST_ENV = os.path.join(_path_to_here, _last_env_filename)
 
 def create_environment(
     environment_name,
-    *args,
     replace=False,
     default_pkgs=DEFAULT_PKGS,
+    ipykernel=INSTALL_IPY_KERNEL,
     **virtualenv_ops
 ):
     """
@@ -41,10 +41,10 @@ def create_environment(
             shutil.rmtree(path_to_venv)
         else:
             return
-
     _create_an_environment(
         environment_name=environment_name,
         default_pkgs=default_pkgs,
+        ipykernel=ipykernel,
         **virtualenv_ops
     )
 
@@ -52,6 +52,8 @@ def create_environment(
 def activate_environment(environment_name, basefolder=ENVS_PATH):
     """
     Activates an existing environment.
+
+    Note: This function doesn't actually run the command but adds the to the file to be executed by manven.
 
     Args:
         environment_name (str): The name of the environment.
@@ -64,11 +66,37 @@ def activate_environment(environment_name, basefolder=ENVS_PATH):
     activate_script = _get_activate_script_path(environment_name, basefolder=basefolder)
 
     # Source the activate file
-    args = ["source", activate_script]
+    args = f"source {activate_script}"
     _write_execute_to_file(args)
 
     # Update last activated environment
     _update_last_activated_environment(environment_name, basefolder)
+
+
+def install_ipy_kernel(environment_name=None, basefolder=ENVS_PATH):
+    """
+    Installs the current environment in the ipy kernel (installs the ipykernel package if it doesn't exist)
+
+    Args:
+        environment_name (str, optional): The name of the environment.
+        basefolder (str): The folder to contain the environment.
+    """
+    package = 'ipykernel'
+    _install_package(
+        environment_name=environment_name,
+        package=package,
+        basefolder=basefolder,
+    )
+    # Install it in the kernel
+    if environment_name is None:
+        python = 'python'
+    else:
+        python = _get_environment_python_path(environment_name, basefolder)
+    args = [python, "-m", "ipykernel", "install", "--user", f"--name={environment_name}"]
+    output = run(args, cwd=basefolder)
+    # Check that the command worked
+    message = "Something went wrong when installing the environment in the ipython kernel"
+    _assert_output(output, message)
 
 
 def list_environments(include_temporary=False):
@@ -95,7 +123,7 @@ def list_environments(include_temporary=False):
     return environments
 
 
-def activate_temp_environment(default_pkgs=DEFAULT_PKGS, **virtualenv_ops):
+def activate_temp_environment(default_pkgs=DEFAULT_PKGS, ipykernel=INSTALL_IPY_KERNEL, **virtualenv_ops):
     """
     Creates and activates a new temporary environment.
     """
@@ -105,6 +133,7 @@ def activate_temp_environment(default_pkgs=DEFAULT_PKGS, **virtualenv_ops):
         environment_name=temp_env_name,
         basefolder=path_to_temp,
         default_pkgs=default_pkgs,
+        ipykernel=ipykernel,
         **virtualenv_ops
     )
     activate_environment(temp_env_name, basefolder=path_to_temp)
@@ -139,7 +168,7 @@ def deactivate_environment():
     """
     Deactivates the current environment (if there is one).
     """
-    args = ["deactivate"]
+    args = "deactivate"
     _write_execute_to_file(args)
 
 
@@ -187,6 +216,7 @@ def _create_an_environment(
     environment_name,
     basefolder=ENVS_PATH,
     default_pkgs=DEFAULT_PKGS,
+    ipykernel=INSTALL_IPY_KERNEL,
     **virtualenv_ops
 ):
     """
@@ -214,6 +244,12 @@ def _create_an_environment(
         packages=default_pkgs,
         basefolder=basefolder,
     )
+
+    if ipykernel:
+        install_ipy_kernel(
+            environment_name,
+            basefolder=basefolder,
+        )
 
 
 def _format_options(virtualenv_ops):
@@ -256,9 +292,9 @@ def _install_package(environment_name, package, basefolder=ENVS_PATH):
         package (str): String specifying python package to install
         basefolder (str): The folder to contain the environment.
     """
-    pip = os.path.join(basefolder, environment_name, "bin", "pip")
+    pip = _get_environment_pip_path(environment_name, basefolder)
     if not os.path.exists(pip):
-        raise ValueError(f"Environment {environment_name} at {basefolder} does not exist.")
+        raise ValueError(f"Environment {environment_name} at {basefolder} does not have a pip executable at {pip}.")
 
     args = [pip, "install", package]
     output = run(args)
@@ -269,7 +305,7 @@ def _install_package(environment_name, package, basefolder=ENVS_PATH):
 
     if package == "manven":
         # Add the to execute file such that the first time text is not printed when using manven
-        python = os.path.join(basefolder, environment_name, "bin", "python")
+        python = _get_environment_python_path(environment_name, basefolder)
         args = [python, "-m", "manven"]
         output = check_output(args).decode('utf-8').strip()
         venv_to_execute_file = os.path.join(output, _to_execute_filename)
@@ -281,10 +317,22 @@ def _install_package(environment_name, package, basefolder=ENVS_PATH):
         _assert_output(output, message)
 
 
+def _get_environment_python_path(environment_name, basefolder=ENVS_PATH):
+    return os.path.join(_get_environment_bin_path(environment_name, basefolder), 'python')
+
+
+def _get_environment_pip_path(environment_name, basefolder=ENVS_PATH):
+    return os.path.join(_get_environment_bin_path(environment_name, basefolder), 'pip')
+
+
+def _get_environment_bin_path(environment_name, basefolder=ENVS_PATH):
+    return os.path.join(_get_absolute_path(environment_name, basefolder), "bin")
+
+
 def _write_execute_to_file(args):
     """Writes (w mode) commands to be executed to a file."""
     with open(TO_EXECUTE_FILE, 'w') as f:
-        f.write(' '.join(args))
+        f.write(args)
 
 
 def _list_temporary_environments():
@@ -351,9 +399,10 @@ def _get_activate_script_path(environment_name, basefolder=ENVS_PATH):
     Returns:
         bool: If the environment exists.
     """
-    # Get the path to the activate script, based on the shell
-    path_to_venv = _get_absolute_path(environment_name, basefolder=basefolder)
-    activate_script = os.path.join(path_to_venv, "bin", _get_activate_script_name())
+    activate_script = os.path.join(
+        _get_environment_bin_path(environment_name, basefolder),
+        _get_activate_script_name(),
+    )
     return activate_script
 
 
