@@ -4,7 +4,7 @@ from subprocess import run, check_output
 from itertools import count
 
 from manven.toolbox import has_virtualenv, current_env, is_current_temp
-from manven.settings import ENVS_PATH, DEFAULT_PKGS
+from manven.settings import ENVS_PATH, DEFAULT_PKGS, PIP_INSTALL_FLAGS
 
 _path_to_here = os.path.dirname(os.path.abspath(__file__))
 _to_execute_filename = ".to_execute.sh"
@@ -18,6 +18,7 @@ def create_environment(
     replace=False,
     clone=None,
     default_pkgs=DEFAULT_PKGS,
+    pip_install_flags=PIP_INSTALL_FLAGS,
     **virtualenv_ops
 ):
     """
@@ -46,6 +47,7 @@ def create_environment(
         environment_name=environment_name,
         clone=clone,
         default_pkgs=default_pkgs,
+        pip_install_flags=pip_install_flags,
         **virtualenv_ops
     )
 
@@ -96,7 +98,7 @@ def list_environments(include_temporary=False):
     return environments
 
 
-def activate_temp_environment(clone=None, default_pkgs=DEFAULT_PKGS, **virtualenv_ops):
+def activate_temp_environment(clone=None, default_pkgs=DEFAULT_PKGS, pip_install_flags=PIP_INSTALL_FLAGS, **virtualenv_ops):
     """
     Creates and activates a new temporary environment.
     """
@@ -107,6 +109,7 @@ def activate_temp_environment(clone=None, default_pkgs=DEFAULT_PKGS, **virtualen
         clone=clone,
         basefolder=path_to_temp,
         default_pkgs=default_pkgs,
+        pip_install_flags=pip_install_flags,
         **virtualenv_ops
     )
     activate_environment(temp_env_name, basefolder=path_to_temp)
@@ -190,6 +193,7 @@ def _create_an_environment(
     clone=None,
     basefolder=ENVS_PATH,
     default_pkgs=DEFAULT_PKGS,
+    pip_install_flags=None,
     **virtualenv_ops
 ):
     """
@@ -223,6 +227,7 @@ def _create_an_environment(
             environment_name,
             packages=default_pkgs,
             basefolder=basefolder,
+            pip_install_flags=pip_install_flags,
         )
 
 
@@ -240,7 +245,7 @@ def _format_options(virtualenv_ops):
     return options
 
 
-def _install_packages(environment_name, packages, basefolder=ENVS_PATH):
+def _install_packages(environment_name, packages, basefolder=ENVS_PATH, pip_install_flags=None):
     """
     Installs packages to an environment.
 
@@ -254,10 +259,11 @@ def _install_packages(environment_name, packages, basefolder=ENVS_PATH):
             environment_name=environment_name,
             package=package,
             basefolder=basefolder,
+            pip_install_flags=pip_install_flags,
         )
 
 
-def _install_package(environment_name, package, basefolder=ENVS_PATH):
+def _install_package(environment_name, package, basefolder=ENVS_PATH, pip_install_flags=None):
     """
     Installs packages to an environment.
 
@@ -270,7 +276,9 @@ def _install_package(environment_name, package, basefolder=ENVS_PATH):
     if not os.path.exists(pip):
         raise ValueError(f"Environment {environment_name} at {basefolder} does not exist.")
 
-    args = [pip, "install", package]
+    if pip_install_flags is None:
+        pip_install_flags = []
+    args = [pip, "install", *pip_install_flags, package]
     output = run(args)
 
     # Check that the command worked

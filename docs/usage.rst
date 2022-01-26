@@ -11,6 +11,7 @@ You can chose where you want ``manven`` to put the virtual environments by addin
    [manven]
    ENVS_PATH=path/to/your/dir
    DEFAULT_PKGS=[manven, neovim]
+   PIP_INSTALL_FLAGS=
 
 which can either be:
 
