@@ -11,6 +11,7 @@ You can chose where you want ``manven`` to put the virtual environments by addin
    [manven]
    ENVS_PATH=path/to/your/dir
    DEFAULT_PKGS=[manven, neovim]
+   PIP_INSTALL_FLAGS=
 
 which can either be:
 
@@ -52,6 +53,12 @@ By default ``manven`` will install itself in the new environment such that you c
 However, to not have ``manven`` install itself, give the flag ``--no-manven``.
 If you already have the virtual environment ``venv`` and try to activate/create it again your current environment will be kept.
 If you instead want to replace the environment with a fresh one, give the flag ``--new````.
+
+
+Clone an environment
+--------------------
+You can also clone an existing environment by passing the ``--clone=<venv-name>`` to either ``activate`` or ``create``.
+This requires ``virtualenv-clone`` to be installed.
 
 
 Remove an environment
