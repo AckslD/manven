@@ -2,8 +2,11 @@
 name: Deploy pages
 
 on:
-  # Runs on pushes targeting the default branch
-  push:
+  workflow_run:
+    workflows:
+      - Test
+    types:
+      - completed
     branches:
       - master
 
@@ -19,10 +22,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Build job
   docs:
-    needs: deploy
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
