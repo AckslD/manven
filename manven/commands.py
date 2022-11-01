@@ -6,7 +6,6 @@ from itertools import count
 from manven.toolbox import has_virtualenv, current_env, is_current_temp
 from manven.settings import ENVS_PATH, DEFAULT_PKGS
 
-
 _path_to_here = os.path.dirname(os.path.abspath(__file__))
 _to_execute_filename = ".to_execute.sh"
 TO_EXECUTE_FILE = os.path.join(_path_to_here, _to_execute_filename)
@@ -16,8 +15,8 @@ LAST_ENV = os.path.join(_path_to_here, _last_env_filename)
 
 def create_environment(
     environment_name,
-    *args,
     replace=False,
+    clone=None,
     default_pkgs=DEFAULT_PKGS,
     **virtualenv_ops
 ):
@@ -28,7 +27,8 @@ def create_environment(
         environment_name (str): The name of the environment.
         replace (bool): Whether to replace an existing environment with the same name
             with a fresh one. (default: False)
-        args, kwargs: Additional arguments passed to virtualenv.
+        clone (str, optional): Whether to clone from an existing environment instead of creating a new one.
+        virtualenv_ops: Additional arguments passed to virtualenv.
     """
     # Check if virtualenv is installed and in the PATH
     if not has_virtualenv():
@@ -44,6 +44,7 @@ def create_environment(
 
     _create_an_environment(
         environment_name=environment_name,
+        clone=clone,
         default_pkgs=default_pkgs,
         **virtualenv_ops
     )
@@ -95,7 +96,7 @@ def list_environments(include_temporary=False):
     return environments
 
 
-def activate_temp_environment(default_pkgs=DEFAULT_PKGS, **virtualenv_ops):
+def activate_temp_environment(clone=None, default_pkgs=DEFAULT_PKGS, **virtualenv_ops):
     """
     Creates and activates a new temporary environment.
     """
@@ -103,6 +104,7 @@ def activate_temp_environment(default_pkgs=DEFAULT_PKGS, **virtualenv_ops):
     temp_env_name = _get_unused_temp_name(path_to_temp)
     _create_an_environment(
         environment_name=temp_env_name,
+        clone=clone,
         basefolder=path_to_temp,
         default_pkgs=default_pkgs,
         **virtualenv_ops
@@ -185,6 +187,7 @@ def check_first_usage():
 
 def _create_an_environment(
     environment_name,
+    clone=None,
     basefolder=ENVS_PATH,
     default_pkgs=DEFAULT_PKGS,
     **virtualenv_ops
@@ -194,26 +197,33 @@ def _create_an_environment(
 
     Args:
         environment_name (str): The name of the environment.
+        clone (str, optional): Whether to clone from an existing environment instead of creating a new one.
         basefolder (str): The folder to contain the environment.
     """
     # Check that basefolder exists, otherwise create it
     if not os.path.exists(basefolder):
         os.makedirs(basefolder)
 
-    # Create the new environment
-    options = _format_options(virtualenv_ops)
-    args = ["virtualenv", *options, environment_name]
-    output = run(args, cwd=basefolder)
+    if clone is not None:
+        # Clone the environment
+        args = ['virtualenv-clone', clone, environment_name]
+        output = run(args, cwd=basefolder)
+    else:
+        # Create the new environment
+        options = _format_options(virtualenv_ops)
+        args = ["virtualenv", *options, environment_name]
+        output = run(args, cwd=basefolder)
 
     # Check that the command worked
     message = f"Something went wrong when creating the environment {environment_name}"
     _assert_output(output, message)
 
-    _install_packages(
-        environment_name,
-        packages=default_pkgs,
-        basefolder=basefolder,
-    )
+    if clone is None:
+        _install_packages(
+            environment_name,
+            packages=default_pkgs,
+            basefolder=basefolder,
+        )
 
 
 def _format_options(virtualenv_ops):
@@ -390,6 +400,9 @@ def _get_current_shell():
     Returns:
         str: The name of the current shell.
     """
+    if 'SHELL' not in os.environ:
+        # default to bash
+        return 'bash'
     return os.environ['SHELL'].split('/')[-1]
 
 

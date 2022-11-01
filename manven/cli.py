@@ -26,6 +26,13 @@ new_op = click.option(
     is_flag=True,
 )
 
+clone_op = click.option(
+    "--clone",
+    type=str,
+    default=None,
+    help="Clone an existing environment instead of creating a fresh one (requires virtualenv-clone).",
+)
+
 default_pkgs_op = click.option(
     "-i", "--install",
     type=str,
@@ -103,12 +110,14 @@ def version():
 @cli.command()
 @environment_name_arg
 @new_op
+@clone_op
 @default_pkgs_op
 @virtualenv_ops
 def activate(
     environment_name,
     *args,
     new=False,
+    clone=None,
     install=DEFAULT_PKGS,
     **virtualenv_ops
 ):
@@ -119,6 +128,7 @@ def activate(
         environment_name,
         *args,
         replace=new,
+        clone=clone,
         default_pkgs=install,
         **virtualenv_ops
     )
@@ -144,12 +154,14 @@ def deactivate():
 @cli.command()
 @environment_name_arg
 @new_op
+@clone_op
 @default_pkgs_op
 @virtualenv_ops
 def create(
     environment_name,
     *args,
     new=False,
+    clone=None,
     install=DEFAULT_PKGS,
     **virtualenv_ops,
 ):
@@ -160,6 +172,7 @@ def create(
         environment_name,
         *args,
         replace=new,
+        clone=clone,
         default_pkgs=install,
         **virtualenv_ops,
     )
@@ -199,8 +212,10 @@ def list(all=False):
 
 @cli.command()
 @default_pkgs_op
+@clone_op
 @virtualenv_ops
 def temp(
+    clone=None,
     install=DEFAULT_PKGS,
     **virtualenv_ops
 ):
@@ -211,6 +226,7 @@ def temp(
     """
     activate_temp_environment(
         default_pkgs=install,
+        clone=clone,
         **virtualenv_ops
     )
 
