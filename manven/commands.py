@@ -98,7 +98,12 @@ def list_environments(include_temporary=False):
     return environments
 
 
-def activate_temp_environment(clone=None, default_pkgs=DEFAULT_PKGS, pip_install_flags=PIP_INSTALL_FLAGS, **virtualenv_ops):
+def activate_temp_environment(
+    clone=None,
+    default_pkgs=DEFAULT_PKGS,
+    pip_install_flags=PIP_INSTALL_FLAGS,
+    **virtualenv_ops,
+):
     """
     Creates and activates a new temporary environment.
     """

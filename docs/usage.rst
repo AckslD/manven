@@ -55,6 +55,12 @@ If you already have the virtual environment ``venv`` and try to activate/create 
 If you instead want to replace the environment with a fresh one, give the flag ``--new````.
 
 
+Clone an environment
+--------------------
+You can also clone an existing environment by passing the ``--clone=<venv-name>`` to either ``activate`` or ``create``.
+This requires ``virtualenv-clone`` to be installed.
+
+
 Remove an environment
 ---------------------
 To remove an existing environment, do:
