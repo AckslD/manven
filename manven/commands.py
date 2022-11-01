@@ -400,6 +400,9 @@ def _get_current_shell():
     Returns:
         str: The name of the current shell.
     """
+    if 'SHELL' not in os.environ:
+        # default to bash
+        return 'bash'
     return os.environ['SHELL'].split('/')[-1]
 
 

@@ -1,0 +1,29 @@
+---
+name: Test
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: |
+          pip install wheel
+          make build
+          make test-deps
+          pip install dist/*.whl
+      - name: Lint
+        run: make lint
+      - name: Create default config file
+        run: |
+          echo '[manven]' > .manven.conf
+          echo 'ENVS_PATH=~/venvs' >> .manven.conf
+          echo 'DEFAULT_PKGS=[manven]' >> .manven.conf
+      - name: Test
+        run: make tests

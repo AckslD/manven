@@ -29,7 +29,7 @@ test-deps:
 	@${PIP} install -r test_requirements.txt
 
 tests:
-	@${PYTHON} -m pytest --cov=${SOURCE_DIR} --cov-fail-under=${MIN_COV} tests
+	@${PYTHON} -m pytest --cov=${SOURCE_DIR} --cov-fail-under=${MIN_COV} --cov-report=term-missing tests
 
 open-cov-report:
 	@${PYTHON} -m pytest --cov=${SOURCE_DIR} --cov-report=html tests && open htmlcov/index.html
