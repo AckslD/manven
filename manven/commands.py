@@ -100,6 +100,7 @@ def list_environments(include_temporary=False):
 
 def activate_temp_environment(
     clone=None,
+    basefolder=ENVS_PATH,
     default_pkgs=DEFAULT_PKGS,
     pip_install_flags=PIP_INSTALL_FLAGS,
     **virtualenv_ops,
@@ -109,10 +110,10 @@ def activate_temp_environment(
     """
     path_to_temp = _get_temp_path()
     temp_env_name = _get_unused_temp_name(path_to_temp)
+    rel_temp_path = os.path.join(os.path.relpath(path_to_temp, start=basefolder), temp_env_name)
     _create_an_environment(
-        environment_name=temp_env_name,
+        environment_name=rel_temp_path,
         clone=clone,
-        basefolder=path_to_temp,
         default_pkgs=default_pkgs,
         pip_install_flags=pip_install_flags,
         **virtualenv_ops
@@ -259,38 +260,20 @@ def _install_packages(environment_name, packages, basefolder=ENVS_PATH, pip_inst
         packages (list): List of strings specifying python packages to install
         basefolder (str): The folder to contain the environment.
     """
-    for package in packages:
-        _install_package(
-            environment_name=environment_name,
-            package=package,
-            basefolder=basefolder,
-            pip_install_flags=pip_install_flags,
-        )
-
-
-def _install_package(environment_name, package, basefolder=ENVS_PATH, pip_install_flags=None):
-    """
-    Installs packages to an environment.
-
-    Args:
-        environment_name (str): The name of the environment.
-        package (str): String specifying python package to install
-        basefolder (str): The folder to contain the environment.
-    """
     pip = os.path.join(basefolder, environment_name, "bin", "pip")
     if not os.path.exists(pip):
         raise ValueError(f"Environment {environment_name} at {basefolder} does not exist.")
 
     if pip_install_flags is None:
         pip_install_flags = []
-    args = [pip, "install", *pip_install_flags, package]
+    args = [pip, "install", *pip_install_flags, *packages]
     output = run(args)
 
     # Check that the command worked
-    message = f"Something went wrong when installing {package}"
+    message = f"Something went wrong when installing {packages}"
     _assert_output(output, message)
 
-    if package == "manven":
+    if "manven" in packages:
         # Add the to execute file such that the first time text is not printed when using manven
         python = os.path.join(basefolder, environment_name, "bin", "python")
         args = [python, "-m", "manven"]

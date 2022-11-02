@@ -77,4 +77,4 @@ _config = _config_from_defaults()
 _config.update(_get_config())
 ENVS_PATH = os.path.expanduser(_config["envs_path"])
 DEFAULT_PKGS = _parse_default_pkgs(_config["default_pkgs"])
-PIP_INSTALL_FLAGS = _config['pip_install_flags'].split(' ')
+PIP_INSTALL_FLAGS = [f for f in _config['pip_install_flags'].split(' ') if f]
