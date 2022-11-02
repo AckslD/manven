@@ -217,16 +217,11 @@ def _create_an_environment(
     if clone is not None:
         # Clone the environment
         args = ['virtualenv-clone', clone, environment_name]
-        output = run(args, cwd=basefolder)
     else:
         # Create the new environment
         options = _format_options(virtualenv_ops)
         args = ["virtualenv", *options, environment_name]
-        output = run(args, cwd=basefolder)
-
-    # Check that the command worked
-    message = f"Something went wrong when creating the environment {environment_name}"
-    _assert_output(output, message)
+    _run_assert_output(args, f"Something went wrong when creating the environment {environment_name}", cwd=basefolder)
 
     if clone is None:
         _install_packages(
@@ -260,18 +255,18 @@ def _install_packages(environment_name, packages, basefolder=ENVS_PATH, pip_inst
         packages (list): List of strings specifying python packages to install
         basefolder (str): The folder to contain the environment.
     """
+    if not packages:
+        return
     pip = os.path.join(basefolder, environment_name, "bin", "pip")
     if not os.path.exists(pip):
         raise ValueError(f"Environment {environment_name} at {basefolder} does not exist.")
 
     if pip_install_flags is None:
         pip_install_flags = []
-    args = [pip, "install", *pip_install_flags, *packages]
-    output = run(args)
-
-    # Check that the command worked
-    message = f"Something went wrong when installing {packages}"
-    _assert_output(output, message)
+    _run_assert_output(
+        [pip, "install", *pip_install_flags, *packages],
+        f"Something went wrong when installing {packages}",
+    )
 
     if "manven" in packages:
         # Add the to execute file such that the first time text is not printed when using manven
@@ -279,12 +274,10 @@ def _install_packages(environment_name, packages, basefolder=ENVS_PATH, pip_inst
         args = [python, "-m", "manven"]
         output = check_output(args).decode('utf-8').strip()
         venv_to_execute_file = os.path.join(output, _to_execute_filename)
-        args = ["touch", venv_to_execute_file]
-        output = run(args)
-
-        # Check that the command worked
-        message = "Something went wrong when adding the file {}".format(TO_EXECUTE_FILE)
-        _assert_output(output, message)
+        _run_assert_output(
+            ["touch", venv_to_execute_file],
+            "Something went wrong when adding the file {}".format(TO_EXECUTE_FILE),
+        )
 
 
 def _write_execute_to_file(args):
@@ -337,12 +330,13 @@ def _is_environment(environment_name, basefolder=ENVS_PATH):
     return os.path.exists(activate_script)
 
 
-def _assert_output(output, message):
+def _run_assert_output(args, message, **kwargs):
     """
-    Checks that the output from a subprocess.run call has 0 as return code.
+    Runs the commmand and checks that the output from a subprocess.run call has 0 as return code.
     """
+    output = run(args, **kwargs)
     if output.returncode != 0:
-        raise RuntimeError(f"{message}: {output.stderr}")
+        raise RuntimeError(f"{message}: (" + ' '.join(args) + ')')
 
 
 def _get_activate_script_path(environment_name, basefolder=ENVS_PATH):
